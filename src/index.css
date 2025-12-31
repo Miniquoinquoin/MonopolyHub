@@ -364,7 +364,7 @@ body {
 }
 
 .no-owners {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   font-size: 0.85rem;
 }
