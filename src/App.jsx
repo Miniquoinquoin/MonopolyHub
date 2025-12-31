@@ -165,8 +165,8 @@ export default function App() {
   return (
     <>
       <div className="app-layout">
-        {/* Fixed Sidebar */}
-        <div className="sidebar">
+        {/* Fixed Left Sidebar */}
+        <div className="sidebar sidebar-left">
           <h1>🎩 Monopoly Hub</h1>
           
           {/* Joueurs dans la sidebar */}
@@ -227,23 +227,6 @@ export default function App() {
                         })}
                       </div>
                     )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Historique dans la sidebar */}
-          <div className="sidebar-section">
-            <h2>📜 Historique</h2>
-            <div className="history-list">
-              {history.length === 0 ? (
-                <p className="empty-state">Aucune transaction</p>
-              ) : (
-                history.map(entry => (
-                  <div key={entry.id} className="history-item">
-                    <div className="time">{entry.time}</div>
-                    <div className="history-text">{entry.text}</div>
                   </div>
                 ))
               )}
@@ -324,6 +307,25 @@ export default function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Fixed Right Sidebar for History */}
+        <div className="sidebar sidebar-right">
+          <div className="sidebar-section">
+            <h2>📜 Historique</h2>
+            <div className="history-list">
+              {history.length === 0 ? (
+                <p className="empty-state">Aucune transaction</p>
+              ) : (
+                history.map(entry => (
+                  <div key={entry.id} className="history-item">
+                    <div className="time">{entry.time}</div>
+                    <div className="history-text">{entry.text}</div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
