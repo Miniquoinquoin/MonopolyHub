@@ -1,0 +1,261 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  min-height: 100vh;
+  color: #fff;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  background: linear-gradient(90deg, #f39c12, #e74c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card h2 {
+  margin-bottom: 15px;
+  color: #f39c12;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn {
+  background: linear-gradient(90deg, #f39c12, #e74c3c);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.btn-small {
+  padding: 5px 12px;
+  font-size: 0.85rem;
+}
+
+.btn-danger {
+  background: #e74c3c;
+}
+
+.btn-success {
+  background: #27ae60;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input:focus {
+  outline: none;
+  border-color: #f39c12;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.input-row .input {
+  margin-bottom: 0;
+}
+
+.player-item, .property-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.player-balance {
+  color: #2ecc71;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.player-balance.negative {
+  color: #e74c3c;
+}
+
+.owners-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.owner-badge {
+  background: rgba(243, 156, 18, 0.3);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 30px;
+  width: 90%;
+  max-width: 500px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal h3 {
+  margin-bottom: 20px;
+  color: #f39c12;
+}
+
+.share-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.share-input label {
+  flex: 1;
+}
+
+.share-input input {
+  width: 80px;
+  text-align: center;
+}
+
+.total-share {
+  text-align: right;
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.total-share.valid {
+  color: #2ecc71;
+}
+
+.total-share.invalid {
+  color: #e74c3c;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.rent-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(46, 204, 113, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.rent-section h3 {
+  color: #2ecc71;
+  margin-bottom: 10px;
+}
+
+.history-item {
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.history-item .time {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+.property-info {
+  flex: 1;
+}
+
+.property-name {
+  font-weight: bold;
+}
+
+.property-rent {
+  color: #2ecc71;
+  font-size: 0.9rem;
+}
+
+.property-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.no-owners {
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  font-size: 0.85rem;
+}
