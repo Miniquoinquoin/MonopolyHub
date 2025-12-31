@@ -43,6 +43,7 @@ export default function App() {
   const [shares, setShares] = useState({})
   
   const [rentModal, setRentModal] = useState({ open: false, propertyId: null, payerId: null })
+  const [editRentModal, setEditRentModal] = useState({ open: false, propertyId: null, newRent: '' })
 
   // Ajouter un joueur
   const addPlayer = () => {
@@ -75,7 +76,9 @@ export default function App() {
       id: genId(),
       name: newPropertyName.trim(),
       rent: parseInt(newPropertyRent),
-      owners: []
+      owners: [],
+      houses: 0,
+      hotels: 0
     }])
     setNewPropertyName('')
     setNewPropertyRent('')
@@ -151,6 +154,45 @@ export default function App() {
     setHistory([historyEntry, ...history.slice(0, 19)])
     
     setRentModal({ open: false, propertyId: null, payerId: null })
+  }
+
+  // Ouvrir modal de modification de loyer
+  const openEditRentModal = (propertyId) => {
+    const property = properties.find(p => p.id === propertyId)
+    setEditRentModal({ open: true, propertyId, newRent: property.rent.toString() })
+  }
+
+  // Sauvegarder le nouveau loyer
+  const saveRent = () => {
+    const { propertyId, newRent } = editRentModal
+    if (!newRent || parseInt(newRent) <= 0) return
+    
+    setProperties(properties.map(p => 
+      p.id === propertyId ? { ...p, rent: parseInt(newRent) } : p
+    ))
+    setEditRentModal({ open: false, propertyId: null, newRent: '' })
+  }
+
+  // Modifier le nombre de maisons
+  const updateHouses = (propertyId, delta) => {
+    setProperties(properties.map(p => {
+      if (p.id === propertyId) {
+        const newHouses = Math.max(0, Math.min(4, (p.houses || 0) + delta))
+        return { ...p, houses: newHouses }
+      }
+      return p
+    }))
+  }
+
+  // Modifier le nombre d'hôtels
+  const updateHotels = (propertyId, delta) => {
+    setProperties(properties.map(p => {
+      if (p.id === propertyId) {
+        const newHotels = Math.max(0, Math.min(1, (p.hotels || 0) + delta))
+        return { ...p, hotels: newHotels }
+      }
+      return p
+    }))
   }
 
   // Reset tout
@@ -270,9 +312,62 @@ export default function App() {
                 <div className="property-card-header">
                   <div className="property-info">
                     <div className="property-name">{property.name}</div>
-                    <div className="property-rent">Loyer: {property.rent}K</div>
+                    <div className="property-rent">
+                      Loyer: {property.rent}K
+                      <button 
+                        className="btn btn-tiny" 
+                        onClick={() => openEditRentModal(property.id)}
+                        title="Modifier le loyer"
+                      >
+                        ✏️
+                      </button>
+                    </div>
                   </div>
                   <button className="btn btn-small btn-danger" onClick={() => removeProperty(property.id)}>✕</button>
+                </div>
+                
+                {/* Houses and Hotels Section */}
+                <div className="property-buildings">
+                  <div className="building-control">
+                    <span className="building-label">🏠 Maisons:</span>
+                    <div className="building-buttons">
+                      <button 
+                        className="btn btn-tiny" 
+                        onClick={() => updateHouses(property.id, -1)}
+                        disabled={(property.houses || 0) === 0}
+                      >
+                        -
+                      </button>
+                      <span className="building-count">{property.houses || 0}</span>
+                      <button 
+                        className="btn btn-tiny" 
+                        onClick={() => updateHouses(property.id, 1)}
+                        disabled={(property.houses || 0) === 4}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="building-control">
+                    <span className="building-label">🏨 Hôtels:</span>
+                    <div className="building-buttons">
+                      <button 
+                        className="btn btn-tiny" 
+                        onClick={() => updateHotels(property.id, -1)}
+                        disabled={(property.hotels || 0) === 0}
+                      >
+                        -
+                      </button>
+                      <span className="building-count">{property.hotels || 0}</span>
+                      <button 
+                        className="btn btn-tiny" 
+                        onClick={() => updateHotels(property.id, 1)}
+                        disabled={(property.hotels || 0) === 1}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="property-card-body">
@@ -417,6 +512,37 @@ export default function App() {
             disabled={!rentModal.payerId}
           >
             Confirmer
+          </button>
+        </div>
+      </Modal>
+
+      {/* Modal de modification du loyer */}
+      <Modal isOpen={editRentModal.open} onClose={() => setEditRentModal({ open: false, propertyId: null, newRent: '' })}>
+        <h3>✏️ Modifier le loyer</h3>
+        <p style={{ marginBottom: '15px', color: 'rgba(255,255,255,0.7)' }}>
+          Propriété: {properties.find(p => p.id === editRentModal.propertyId)?.name}
+        </p>
+        
+        <label style={{ display: 'block', marginBottom: '10px' }}>Nouveau loyer (K):</label>
+        <input
+          className="input"
+          type="number"
+          min="1"
+          value={editRentModal.newRent}
+          onChange={e => setEditRentModal({ ...editRentModal, newRent: e.target.value })}
+          placeholder="Entrez le nouveau loyer"
+        />
+        
+        <div className="action-buttons">
+          <button className="btn" onClick={() => setEditRentModal({ open: false, propertyId: null, newRent: '' })}>
+            Annuler
+          </button>
+          <button 
+            className="btn btn-success" 
+            onClick={saveRent}
+            disabled={!editRentModal.newRent || parseInt(editRentModal.newRent) <= 0}
+          >
+            Sauvegarder
           </button>
         </div>
       </Modal>
