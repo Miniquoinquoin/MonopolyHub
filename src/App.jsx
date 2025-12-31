@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react'
 
+// Constantes
+const MAX_HOUSES = 4
+const MAX_HOTELS = 1
+
 // Utilitaire pour générer des IDs
 const genId = () => Math.random().toString(36).substr(2, 9)
+
+// Validation du loyer
+const isValidRent = (rentValue) => {
+  if (!rentValue || !rentValue.trim()) return false
+  const parsed = parseInt(rentValue)
+  return !isNaN(parsed) && parsed > 0
+}
 
 // Hook pour localStorage
 function useLocalStorage(key, initialValue) {
@@ -165,7 +176,7 @@ export default function App() {
   // Sauvegarder le nouveau loyer
   const saveRent = () => {
     const { propertyId, newRent } = editRentModal
-    if (!newRent || parseInt(newRent) <= 0) return
+    if (!isValidRent(newRent)) return
     
     setProperties(properties.map(p => 
       p.id === propertyId ? { ...p, rent: parseInt(newRent) } : p
@@ -177,7 +188,7 @@ export default function App() {
   const updateHouses = (propertyId, delta) => {
     setProperties(properties.map(p => {
       if (p.id === propertyId) {
-        const newHouses = Math.max(0, Math.min(4, (p.houses || 0) + delta))
+        const newHouses = Math.max(0, Math.min(MAX_HOUSES, (p.houses || 0) + delta))
         return { ...p, houses: newHouses }
       }
       return p
@@ -188,7 +199,7 @@ export default function App() {
   const updateHotels = (propertyId, delta) => {
     setProperties(properties.map(p => {
       if (p.id === propertyId) {
-        const newHotels = Math.max(0, Math.min(1, (p.hotels || 0) + delta))
+        const newHotels = Math.max(0, Math.min(MAX_HOTELS, (p.hotels || 0) + delta))
         return { ...p, hotels: newHotels }
       }
       return p
@@ -342,7 +353,7 @@ export default function App() {
                       <button 
                         className="btn btn-tiny" 
                         onClick={() => updateHouses(property.id, 1)}
-                        disabled={(property.houses || 0) === 4}
+                        disabled={(property.houses || 0) === MAX_HOUSES}
                       >
                         +
                       </button>
@@ -362,7 +373,7 @@ export default function App() {
                       <button 
                         className="btn btn-tiny" 
                         onClick={() => updateHotels(property.id, 1)}
-                        disabled={(property.hotels || 0) === 1}
+                        disabled={(property.hotels || 0) === MAX_HOTELS}
                       >
                         +
                       </button>
@@ -540,7 +551,7 @@ export default function App() {
           <button 
             className="btn btn-success" 
             onClick={saveRent}
-            disabled={!editRentModal.newRent || parseInt(editRentModal.newRent) <= 0}
+            disabled={!isValidRent(editRentModal.newRent)}
           >
             Sauvegarder
           </button>
