@@ -102,7 +102,7 @@ export default function App() {
   const saveShares = () => {
     const propertyId = shareModal.propertyId
     const newOwners = Object.entries(shares)
-      .filter(([_, share]) => share > 0)
+      .filter(([, share]) => share > 0)
       .map(([playerId, share]) => ({ playerId, share: parseInt(share) }))
     
     setProperties(properties.map(p => 
@@ -163,118 +163,168 @@ export default function App() {
   }
 
   return (
-    <div className="container">
-      <h1>🎩 Monopoly Hub</h1>
-      
-      <div className="grid">
-        {/* Joueurs */}
-        <div className="card">
-          <h2>👥 Joueurs</h2>
-          <div className="input-row">
-            <input
-              className="input"
-              placeholder="Nom du joueur"
-              value={newPlayerName}
-              onChange={e => setNewPlayerName(e.target.value)}
-              onKeyPress={e => e.key === 'Enter' && addPlayer()}
-            />
-            <button className="btn" onClick={addPlayer}>+</button>
-          </div>
+    <>
+      <div className="app-layout">
+        {/* Fixed Sidebar */}
+        <div className="sidebar">
+          <h1>🎩 Monopoly Hub</h1>
           
-          {players.map(player => (
-            <div key={player.id} className="player-item">
-              <span>{player.name}</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button className="btn btn-small" onClick={() => adjustBalance(player.id, -10)}>-10</button>
-                <span className={`player-balance ${player.balance < 0 ? 'negative' : ''}`}>
-                  {player.balance}K
-                </span>
-                <button className="btn btn-small btn-success" onClick={() => adjustBalance(player.id, 10)}>+10</button>
-                <button className="btn btn-small btn-danger" onClick={() => removePlayer(player.id)}>✕</button>
-              </div>
+          {/* Joueurs dans la sidebar */}
+          <div className="sidebar-section">
+            <h2>👥 Joueurs</h2>
+            <div className="input-row">
+              <input
+                className="input"
+                placeholder="Nom du joueur"
+                value={newPlayerName}
+                onChange={e => setNewPlayerName(e.target.value)}
+                onKeyPress={e => e.key === 'Enter' && addPlayer()}
+              />
+              <button className="btn" onClick={addPlayer}>+</button>
             </div>
-          ))}
+            
+            <div className="players-list">
+              {players.map(player => (
+                <div key={player.id} className="player-item">
+                  <div className="player-info">
+                    <span className="player-name">{player.name}</span>
+                    <span className={`player-balance ${player.balance < 0 ? 'negative' : ''}`}>
+                      {player.balance}K
+                    </span>
+                  </div>
+                  <div className="player-actions">
+                    <button className="btn btn-small" onClick={() => adjustBalance(player.id, -10)}>-10</button>
+                    <button className="btn btn-small btn-success" onClick={() => adjustBalance(player.id, 10)}>+10</button>
+                    <button className="btn btn-small btn-danger" onClick={() => removePlayer(player.id)}>✕</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Résumé des propriétés dans la sidebar */}
+          <div className="sidebar-section">
+            <h2>🏠 Propriétés ({properties.length})</h2>
+            <div className="properties-summary">
+              {properties.length === 0 ? (
+                <p className="empty-state">Aucune propriété</p>
+              ) : (
+                properties.map(property => (
+                  <div key={property.id} className="property-summary-item">
+                    <div className="property-summary-header">
+                      <span className="property-name">{property.name}</span>
+                      <span className="property-rent">{property.rent}K</span>
+                    </div>
+                    {property.owners.length > 0 && (
+                      <div className="owners-summary">
+                        {property.owners.map(owner => {
+                          const player = players.find(p => p.id === owner.playerId)
+                          return player ? (
+                            <span key={owner.playerId} className="owner-badge-small">
+                              {player.name}: {owner.share}%
+                            </span>
+                          ) : null
+                        })}
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Historique dans la sidebar */}
+          <div className="sidebar-section">
+            <h2>📜 Historique</h2>
+            <div className="history-list">
+              {history.length === 0 ? (
+                <p className="empty-state">Aucune transaction</p>
+              ) : (
+                history.map(entry => (
+                  <div key={entry.id} className="history-item">
+                    <div className="time">{entry.time}</div>
+                    <div className="history-text">{entry.text}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Propriétés */}
-        <div className="card">
-          <h2>🏠 Propriétés</h2>
-          <div className="input-row">
-            <input
-              className="input"
-              placeholder="Nom de la propriété"
-              value={newPropertyName}
-              onChange={e => setNewPropertyName(e.target.value)}
-            />
-            <input
-              className="input"
-              type="number"
-              placeholder="Loyer"
-              value={newPropertyRent}
-              onChange={e => setNewPropertyRent(e.target.value)}
-              style={{ width: '100px' }}
-            />
-            <button className="btn" onClick={addProperty}>+</button>
+        {/* Main Content Area */}
+        <div className="main-content">
+          <div className="content-header">
+            <h2>🏠 Gestion des Propriétés</h2>
+            <button className="btn btn-danger" onClick={resetAll}>
+              🗑️ Réinitialiser tout
+            </button>
           </div>
-          
-          {properties.map(property => (
-            <div key={property.id} className="property-item" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div className="property-info">
-                  <div className="property-name">{property.name}</div>
-                  <div className="property-rent">Loyer: {property.rent}K</div>
+
+          <div className="card">
+            <h3>Ajouter une propriété</h3>
+            <div className="input-row">
+              <input
+                className="input"
+                placeholder="Nom de la propriété"
+                value={newPropertyName}
+                onChange={e => setNewPropertyName(e.target.value)}
+              />
+              <input
+                className="input"
+                type="number"
+                placeholder="Loyer"
+                value={newPropertyRent}
+                onChange={e => setNewPropertyRent(e.target.value)}
+                style={{ width: '150px' }}
+              />
+              <button className="btn" onClick={addProperty}>+ Ajouter</button>
+            </div>
+          </div>
+
+          <div className="properties-grid">
+            {properties.map(property => (
+              <div key={property.id} className="property-card">
+                <div className="property-card-header">
+                  <div className="property-info">
+                    <div className="property-name">{property.name}</div>
+                    <div className="property-rent">Loyer: {property.rent}K</div>
+                  </div>
+                  <button className="btn btn-small btn-danger" onClick={() => removeProperty(property.id)}>✕</button>
                 </div>
-                <div className="property-actions">
-                  <button className="btn btn-small" onClick={() => openShareModal(property.id)}>📝 Parts</button>
+                
+                <div className="property-card-body">
+                  <div className="owners-section">
+                    <strong>Propriétaires:</strong>
+                    {property.owners.length === 0 ? (
+                      <span className="no-owners"> Aucun</span>
+                    ) : (
+                      <div className="owners-list">
+                        {property.owners.map(owner => {
+                          const player = players.find(p => p.id === owner.playerId)
+                          return player ? (
+                            <span key={owner.playerId} className="owner-badge">
+                              {player.name}: {owner.share}%
+                            </span>
+                          ) : null
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="property-card-actions">
+                  <button className="btn btn-small" onClick={() => openShareModal(property.id)}>📝 Gérer les parts</button>
                   <button 
                     className="btn btn-small btn-success" 
                     onClick={() => setRentModal({ open: true, propertyId: property.id, payerId: null })}
                     disabled={property.owners.length === 0}
                   >
-                    💰 Loyer
+                    💰 Collecter loyer
                   </button>
-                  <button className="btn btn-small btn-danger" onClick={() => removeProperty(property.id)}>✕</button>
                 </div>
               </div>
-              <div className="owners-list">
-                {property.owners.length === 0 ? (
-                  <span className="no-owners">Aucun propriétaire</span>
-                ) : (
-                  property.owners.map(owner => {
-                    const player = players.find(p => p.id === owner.playerId)
-                    return player ? (
-                      <span key={owner.playerId} className="owner-badge">
-                        {player.name}: {owner.share}%
-                      </span>
-                    ) : null
-                  })
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Historique */}
-        <div className="card">
-          <h2>📜 Historique</h2>
-          {history.length === 0 ? (
-            <p style={{ color: 'rgba(255,255,255,0.5)' }}>Aucune transaction</p>
-          ) : (
-            history.map(entry => (
-              <div key={entry.id} className="history-item">
-                <div className="time">{entry.time}</div>
-                <div>{entry.text}</div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="card">
-          <h2>⚙️ Actions</h2>
-          <button className="btn btn-danger" onClick={resetAll} style={{ width: '100%' }}>
-            🗑️ Réinitialiser tout
-          </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -368,6 +418,6 @@ export default function App() {
           </button>
         </div>
       </Modal>
-    </div>
+    </>
   )
 }
